@@ -231,11 +231,11 @@ void QC3Control::setVoltage(double volt){
 }
 
 
-inline double QC3Control::getVoltage(){
+double QC3Control::getVoltage(){
   return _milliVoltNow/1000.0;
 }
 
-inline unsigned int QC3Control::getMilliVoltage(){
+unsigned int QC3Control::getMilliVoltage(){
   return _milliVoltNow;
 }
 
