@@ -25,9 +25,9 @@ To reach QC3.0 continuous mode, D- must be set high, which can be achieved two w
 Both circuits are supported by the library, but basically, I suggest you first try the recommended circuit, and if your QC3 charger refuses to generate anything else than 5V, then try with the legacy circuit, changing the constructor in the code accordingly.
 
 ## Class A vs Class B
-QC3.0 class A is mostly used for phone chargers and outputs up to 12V. It is supported by QC3Control and fully tested. Possible voltages are 5V (USB default), 9V and 12V, plus any value between 3.6V and 12V obtained by 200mV steps from 5V (or from the previous voltage reached using setMilliVoltage()). 
+QC3.0 class A is the most common, is mainly used for phone chargers and outputs up to 12V. It is supported by QC3Control and fully tested. Possible voltages are 5V (USB default), 9V and 12V, plus any value between 3.6V and 12V obtained by 200mV steps from 5V (or from the previous voltage reached using setMilliVoltage()). 
 
-QC3.0 class B is more targeted at laptops and can output up to 20V. **WARNING:** this means that the Arduino will be **destroyed** if powered from the USB output voltage using one of the circuits below, and the use of a separate USB output, power supply or voltage regulator is mandatory. Apart from that, it is now supported by QC3Control although testing was limited, and is enabled by calling begin(true). Possible voltages are then 5V (USB default), 9V, 12V and 20V, plus any value between 3.6V and 20V obtained by 200mV steps from 5V (or from the previous voltage reached using setMilliVoltage()). 
+QC3.0 class B is more targeted at laptops and can output up to 20V. **WARNING:** this means that the Arduino will be **destroyed** if powered directly from the controlled output voltage, and the use of a separate USB output, power supply or voltage regulator is mandatory. That being said, class B is now supported by QC3Control although testing was limited, and it is enabled by calling begin(true) instead of begin(). Possible voltages are then 5V (USB default), 9V, 12V and 20V, plus any value between 3.6V and 20V obtained by 200mV steps from 5V (or from the previous voltage reached using setMilliVoltage()). 
 
 ### How to connect?
 As indicated above, the library supports the 2 following configurations. In all cases, all you need is a few resistors.
@@ -116,7 +116,7 @@ void loop() {
   delay(1000);
   quickCharge.set5V();
   delay(1000);
-  quickCharge.setVoltage(6);
+  quickCharge.setMilliVoltage(6000);
   delay(1000);
   for (int i = 0; i < 10; i++) quickCharge.decrementVoltage();
   delay(1000);
@@ -125,7 +125,11 @@ void loop() {
 ```
 **Please note**, delay() here is just used to demonstrate. Better not to stop the complete program with delay()'s.
 
-If you can, place the call to begin() (or setVoltage()) at the end of the setup(). The handshake needs a fixed time but that already starts when the QC 3.0 source (and thus the Arduino) is turned on. So by doing begin() last you can do stuff while waiting.
+If you can, place the call to begin() (or setMilliVoltage()) at the end of the setup(). The handshake needs a fixed time but that already starts when the QC 3.0 source (and thus the Arduino) is turned on. So by doing begin() last you can do stuff while waiting.
+
+## Quick start
+
+Note: this is just a partial overview. For full documentation, please see the next section.
 
 ### Constructors
 #### QC3Control(byte DpPin, byte DmPin)
@@ -136,18 +140,18 @@ If you can, place the call to begin() (or setVoltage()) at the end of the setup(
 
 ### Methods
 #### void .begin()
-[QC2 or QC3 power source] Just does the handshake with the Quick Charge 3.0 source so it will accept commands for different voltage. It's not mandatory to call begin(), if it's not called before setting a voltage the library will call begin() at that moment.
+[QC2 or QC3 power source] Just does the handshake with a Quick Charge 3.0 (class A) source so it will accept commands for different voltages. It's not mandatory to call begin(), if it's not called before setting a voltage the library will call begin() at that moment.
 
 #### void .set5V(), .set9V() and .set12V()
 [QC2 or QC3 power source] Sets the desired voltage of the QC source using discrete (QC2) mode. 
 
-#### void .setVoltage(double volt), setMilliVoltage(unsigned int milliVolt)
+#### void setMilliVoltage(unsigned int milliVolt)
 [QC3 power source only] Sets the desired voltage of the QC3.0 source using continuous (QC3) mode. Setting an unreachable voltage will result in the closest supported voltage.
 
-#### double getVoltage(), unsigned int getMilliVoltage()
+#### unsigned int getMilliVoltage()
 [QC2 or QC3 power source] Return the last voltage that was requested, or the closest one in the range 3.6 - 12V. 
 
-Note that these methods return the value the library requested, not the actual voltage which may be different if the power source did not behave as exepected.
+**Important:** Note that this method returns the value the library requested, not the actual voltage which may be different if the power source did not behave as exepected.
 
 #### void incrementVoltage(), decrementVoltage()
 [QC3 power source only] Requests an increment or decrement of the voltage by 0.2V
@@ -155,7 +159,7 @@ Note that these methods return the value the library requested, not the actual v
 ## Full documentation
 Full documentation of all the methods of this library can be found inside the library located in `QC3Control\doc`. Just open `QC3Control\doc\index.html` to see all methods of QC3Control. 
 
-You can also view the documentation via [GitHub HTML Preview](https://htmlpreview.github.io/?https://github.com/vdeconinck/QC3Control/master/doc/index.html).
+You can also view the documentation online via [GitHub HTML Preview](https://htmlpreview.github.io/?https://github.com/vdeconinck/QC3Control/master/doc/index.html).
 
 This documentation is powered by [Doxygen](http://www.doxygen.org/) and thus fully extracted from the source files. This README.md is also used as Main Page.
 
