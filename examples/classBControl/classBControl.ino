@@ -4,7 +4,7 @@
 // Pin 5 for Data-
 
 // See How to connect in the documentation for more details.
-QC3Control quickCharge(4, 5);
+QC3Control quickCharge(16, 17);
 
 void setup()
 {
@@ -29,8 +29,11 @@ void loop()
   delay(1000);
   quickCharge.setMilliVoltage(15000);
   delay(1000);
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 12; i++)
+  {
     quickCharge.decrementVoltage();
+    delay(100);
+  }
   delay(1000);
   quickCharge.set20V();
 }
